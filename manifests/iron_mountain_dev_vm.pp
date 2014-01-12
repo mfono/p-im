@@ -38,6 +38,7 @@ exec { "add_grails_repo":
     require => Package['ubuntu-desktop'],
     onlyif  => "grep -h \"^deb.*${grailsPpa}\" /etc/apt/sources.list.d/* > /dev/null 2>&1; [ $? -ne 0 ] >/dev/null 2>&1",
 }
+->
 package { "grails-ppa":
     ensure => installed,
 }
@@ -53,21 +54,21 @@ package { "mysql-server":
 }
 
 # MySQL Workbench 6.0
-class { "mysql_workbench":
-    require => [Package['ubuntu-desktop'], Package['mysql-server']],
-}
-
-# Gradle 1.10
-$gradlePpa = 'cwchien/gradle'
-exec { "add_gradle_repo":
-    command => "add-apt-repository -y ppa:${gradlePpa} && apt-get update",
-    require => Package['ubuntu-desktop'],
-    onlyif  => "grep -h \"^deb.*${gradlePpa}\" /etc/apt/sources.list.d/* > /dev/null 2>&1; [ $? -ne 0 ] >/dev/null 2>&1"
-}
-->
-package { "gradle":
-    ensure => installed,
-}
+#class { "mysql_workbench":
+#    require => [Package['ubuntu-desktop'], Package['mysql-server']],
+#}
+#
+## Gradle 1.10
+#$gradlePpa = 'cwchien/gradle'
+#exec { "add_gradle_repo":
+#    command => "add-apt-repository -y ppa:${gradlePpa} && apt-get update",
+#    require => Package['ubuntu-desktop'],
+#    onlyif  => "grep -h \"^deb.*${gradlePpa}\" /etc/apt/sources.list.d/* > /dev/null 2>&1; [ $? -ne 0 ] >/dev/null 2>&1"
+#}
+#->
+#package { "gradle":
+#    ensure => installed,
+#}
 
 # Midnight Commander
 package { "mc":

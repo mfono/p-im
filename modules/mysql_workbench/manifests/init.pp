@@ -56,6 +56,7 @@ class mysql_workbench(
     }
     ->
     exec { 'get_mysqlwb_missing_packages':
-        command => "apt-get -f install",
+        command => "apt-get -f -y install",
+        unless  => "/usr/bin/apt-get check",
     }
 }

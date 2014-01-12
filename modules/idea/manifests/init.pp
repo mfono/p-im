@@ -43,7 +43,6 @@ class idea(
             cwd     => $installDir,
             creates => "${installDir}/${installerFilename}",
             command => "wget \"${downloadUrl}\" -O ${installerFilename}",
-            timeout => 600,
             require => [Package['wget'], File["${installDir}"]],
         }
         file { "${installDir}/${installerFilename}":

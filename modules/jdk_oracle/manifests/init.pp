@@ -69,6 +69,7 @@ class jdk_oracle(
         mode => 755
     }
     ->
+    # TODO: Megoldani, hogy csak akkor fusson ez, ha az Exec['update_alternative_java'] is (command-ok osszevonasa &&-el?)
     exec { 'update_alternative_config_java':
         command   => "update-alternatives --config java",
     }
@@ -84,6 +85,7 @@ class jdk_oracle(
         mode => 755
     }
     ->
+    # TODO: Megoldani, hogy csak akkor fusson ez, ha az Exec['update_alternative_javac'] is
     exec { 'update_alternative_config_javac':
         command   => "update-alternatives --config javac",
     }
