@@ -16,9 +16,15 @@ exec { "apt_get_update":
 }
 Exec['apt_get_update'] -> Package <| |>
 
+# MySQL 5.5
+package { "mysql-server":
+    ensure => installed,
+}
+
 # Java 1.7.0_45
 class { "jdk_oracle":
-    require => Exec['apt_get_update'],
+    #require  => Exec['apt_get_update'],
+    useCache => true,
 }
 
 # GUI
@@ -28,7 +34,8 @@ package { "ubuntu-desktop":
 
 # IDEA 13
 class { "idea":
-    require => Package['ubuntu-desktop'],
+    require  => Package['ubuntu-desktop'],
+    useCache => true,
 }
 
 # Grails 2.3.4
@@ -43,32 +50,28 @@ package { "grails-ppa":
     ensure => installed,
 }
 
+# Gradle 1.10
+$gradlePpa = 'cwchien/gradle'
+exec { "add_gradle_repo":
+    command => "add-apt-repository -y ppa:${gradlePpa} && apt-get update",
+    require => Package['ubuntu-desktop'],
+    onlyif  => "grep -h \"^deb.*${gradlePpa}\" /etc/apt/sources.list.d/* > /dev/null 2>&1; [ $? -ne 0 ] >/dev/null 2>&1"
+}
+->
+package { "gradle":
+    ensure => installed,
+}
+
 # Git 1.8.5.2
 package { "git":
     ensure => installed,
 }
 
-# MySQL 5.5
-package { "mysql-server":
-    ensure => installed,
-}
-
 # MySQL Workbench 6.0
-#class { "mysql_workbench":
-#    require => [Package['ubuntu-desktop'], Package['mysql-server']],
-#}
-#
-## Gradle 1.10
-#$gradlePpa = 'cwchien/gradle'
-#exec { "add_gradle_repo":
-#    command => "add-apt-repository -y ppa:${gradlePpa} && apt-get update",
-#    require => Package['ubuntu-desktop'],
-#    onlyif  => "grep -h \"^deb.*${gradlePpa}\" /etc/apt/sources.list.d/* > /dev/null 2>&1; [ $? -ne 0 ] >/dev/null 2>&1"
-#}
-#->
-#package { "gradle":
-#    ensure => installed,
-#}
+class { "mysql_workbench":
+    require  => [Package['ubuntu-desktop'], Package['mysql-server']],
+    useCache => true,
+}
 
 # Midnight Commander
 package { "mc":

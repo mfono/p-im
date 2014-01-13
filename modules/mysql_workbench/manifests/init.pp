@@ -46,17 +46,15 @@ class mysql_workbench(
         }
     }
 
-    # TODO: Atrakni shell scriptbe, mert a dpkg hibat fog dobni a hianyzo lib-ek miatt, es ezert nem is fog lefutni a get_mysqlwb_missing_packages
-    # Kitomorites
-    exec { 'extract_mysqlwb':
+    # Azert telepitjuk bash script segitsegevel, mert a package (.deb) telepitoje fuggosegek miatt elszall, ami miatt
+    # a puppet hibasnak tekinti a telepitest, holott egy utasitassal a fuggosegek egyszeruen telepithetoek
+    file { "${installDir}/install.sh":
+        source => "puppet:///modules/mysql_workbench/install.sh",
+    }
+    exec { 'run_mysql_wb_installer':
         cwd     => "${installDir}/",
-        command => "dpkg -i ${installerFilename}",
+        command => "/bin/bash install.sh ${installerFilename}",
         creates => ['/usr/bin/mysql-workbench', '/usr/bin/mysql-workbench-bin'],
         require => Exec['get_mysqlwb_installer'],
-    }
-    ->
-    exec { 'get_mysqlwb_missing_packages':
-        command => "apt-get -f -y install",
-        unless  => "/usr/bin/apt-get check",
     }
 }
