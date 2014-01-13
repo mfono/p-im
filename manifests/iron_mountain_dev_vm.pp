@@ -1,5 +1,8 @@
 # Az Iron Mountain projekthez szukseges alkalmazasokat biztosito puppet
 
+# Tesztelesi celokra: egyes moduloknal lehetoseg van ra, hogy ne toltessuk le minden futaskor a telepitot, hanem egy helyileg tarolt valtozatot hasznaljunk
+$useCache = false
+
 # Alapertelmezett exec path beallitasa a modul szamara
 Exec {
     path => ['/usr/local/bin', '/usr/local/sbin', '/usr/bin', '/usr/sbin', '/bin']
@@ -23,8 +26,7 @@ package { "mysql-server":
 
 # Java 1.7.0_45
 class { "jdk_oracle":
-    #require  => Exec['apt_get_update'],
-    useCache => true,
+    useCache => $useCache,
 }
 
 # GUI
@@ -35,7 +37,7 @@ package { "ubuntu-desktop":
 # IDEA 13
 class { "idea":
     require  => Package['ubuntu-desktop'],
-    useCache => true,
+    useCache => $useCache,
 }
 
 # Grails 2.3.4
@@ -49,6 +51,10 @@ exec { "add_grails_repo":
 package { "grails-ppa":
     ensure => installed,
 }
+->
+exec { 'set_grails_environment_var':
+    command => "grep -Ev '^GRAILS_HOME\\w*=' /etc/environment > /tmp/new_environment && echo 'GRAILS_HOME=/usr/share/grails/2.1.1' >> /tmp/new_environment && mv /tmp/new_environment /etc/environment",
+}
 
 # Gradle 1.10
 $gradlePpa = 'cwchien/gradle'
@@ -61,6 +67,10 @@ exec { "add_gradle_repo":
 package { "gradle":
     ensure => installed,
 }
+->
+exec { 'set_gradle_environment_var':
+    command => "grep -Ev '^GRADLE_HOME\\w*=' /etc/environment > /tmp/new_environment && echo 'GRADLE_HOME=/usr/lib/gradle/1.10' >> /tmp/new_environment && mv /tmp/new_environment /etc/environment",
+}
 
 # Git 1.8.5.2
 package { "git":
@@ -70,7 +80,7 @@ package { "git":
 # MySQL Workbench 6.0
 class { "mysql_workbench":
     require  => [Package['ubuntu-desktop'], Package['mysql-server']],
-    useCache => true,
+    useCache => $useCache,
 }
 
 # Midnight Commander

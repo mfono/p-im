@@ -56,7 +56,7 @@ class idea(
         cwd     => "${installDir}/",
         command => "tar xvf ${installerFilename} -C ${installDir}",
         require => Exec['get_idea_installer'],
-        # Csak akkor kell kitomoriteni, ha meg nem csomgaoltuk ki (creates parameter nem jo, mert amit ez az utasitas letrehoz, azt ki fogjuk torolni)
+        # Csak akkor kell kitomoriteni, ha meg nem csomgaoltuk ki (creates parameter nem jo, mert amit ez az utasitas letrehoz, azt kesobb ki fogjuk torolni)
         onlyif  => "[ ! -f ${appHome}/bin/idea.sh ] >/dev/null 2>&1"
     }
     ->

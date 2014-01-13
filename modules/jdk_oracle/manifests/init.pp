@@ -61,37 +61,27 @@ class jdk_oracle(
     ## java
     exec { 'update_alternative_java':
         creates   => "/usr/bin/java",
-        command   => "update-alternatives --install \"/usr/bin/java\" \"java\" \"${javaHome}/bin/java\" 1",
+        command   => "update-alternatives --install \"/usr/bin/java\" \"java\" \"${javaHome}/bin/java\" 1 && update-alternatives --config java",
         require   => Exec['extract_jdk'],
     }
     ->
     file { '/usr/bin/java':
         mode => 755
     }
-    ->
-    # TODO: Megoldani, hogy csak akkor fusson ez, ha az Exec['update_alternative_java'] is (command-ok osszevonasa &&-el?)
-    exec { 'update_alternative_config_java':
-        command   => "update-alternatives --config java",
-    }
 
     ## javac
     exec { 'update_alternative_javac':
         creates => "/usr/bin/javac",
-        command => "update-alternatives --install \"/usr/bin/javac\" \"javac\" \"${javaHome}/bin/javac\" 1",
+        command => "update-alternatives --install \"/usr/bin/javac\" \"javac\" \"${javaHome}/bin/javac\" 1 && update-alternatives --config javac",
         require => Exec['extract_jdk'],
     }
     ->
     file { '/usr/bin/javac':
         mode => 755
     }
-    ->
-    # TODO: Megoldani, hogy csak akkor fusson ez, ha az Exec['update_alternative_javac'] is
-    exec { 'update_alternative_config_javac':
-        command   => "update-alternatives --config javac",
-    }
 
-    #exec { 'set_environment_vars':
-    #    command => "export JAVA_HOME = \"${javaHome}\"",
-    #    require => File["${javaHome}"],
-    #}
+    exec { 'set_jdk_environment_var':
+        command => "grep -Ev '^JAVA_HOME\\w*=' /etc/environment > /tmp/new_environment && echo 'JAVA_HOME=${javaHome}' >> /tmp/new_environment && mv /tmp/new_environment /etc/environment",
+        require => Exec['update_alternative_java'],
+    }
 }
