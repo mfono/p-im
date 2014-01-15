@@ -1,14 +1,14 @@
-# Grails telepito osztaly
+# Gradle telepito osztaly
 #
-class grails(
-    $installDir  = '/opt/grails',
-    $version     = '2.3.4',
-    $downloadUrl = 'http://dist.springframework.org.s3.amazonaws.com/release/GRAILS/grails-2.3.4.zip',
+class gradle(
+    $installDir  = '/opt/gradle',
+    $version     = '1.10',
+    $downloadUrl = 'http://services.gradle.org/distributions/gradle-1.10-all.zip',
     $useCache    = false,
 )
 {
     $installerFilename = inline_template('<%= File.basename(@downloadUrl) %>')
-    $appHome          = "${$installDir}/grails-${version}"
+    $appHome          = "${$installDir}/gradle-${version}"
 
     # Alapertelmezett exec path beallitasa a modul szamara
     Exec {
@@ -25,16 +25,16 @@ class grails(
 
     if ($useCache) {
         file { "${installDir}/${installerFilename}":
-            source  => "puppet:///modules/grails/${installerFilename}",
+            source  => "puppet:///modules/gradle/${installerFilename}",
         }
-        exec { 'get_grails_installer':
+        exec { 'get_gradle_installer':
             cwd       => $installDir,
-            creates   => "${installDir}/grails_from_cache",
-            command   => 'touch grails_from_cache',
+            creates   => "${installDir}/gradle_from_cache",
+            command   => 'touch gradle_from_cache',
             require   => File["${installDir}/${installerFilename}"],
         }
     } else {
-        exec { 'get_grails_installer':
+        exec { 'get_gradle_installer':
             cwd       => $installDir,
             creates   => "${installDir}/${installerFilename}",
             command   => "wget \"${downloadUrl}\" -O ${installerFilename}",
@@ -44,19 +44,19 @@ class grails(
     }
 
     # Kitomorites
-    exec { 'extract_grails':
+    exec { 'extract_gradle':
         cwd       => "${installDir}/",
         command   => "unzip ${installerFilename}",
         creates   => $appHome,
-        require   => [Package['unzip'], Exec['get_grails_installer']],
+        require   => [Package['unzip'], Exec['get_gradle_installer']],
     }
     file { "${installDir}/set_env.sh":
-        source => "puppet:///modules/grails/set_env.sh",
+        source => "puppet:///modules/gradle/set_env.sh",
     }
-    exec { 'run_grails_set_env':
+    exec { 'run_gradle_set_env':
         cwd     => "${installDir}/",
         command => "/bin/bash set_env.sh '${appHome}'",
-        require => [Exec['extract_grails'], File["${installDir}/set_env.sh"]],
+        require => [Exec['extract_gradle'], File["${installDir}/set_env.sh"]],
         # TODO
         #unless  => ,
     }

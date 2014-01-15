@@ -8,8 +8,11 @@ Exec {
     path => ['/usr/local/bin', '/usr/local/sbin', '/usr/bin', '/usr/sbin', '/bin']
 }
 
-# wget package hozzadasa virtualiskent, mert tobb osztaly is hivatkozik ra
+# package-ek hozzadasa virtualiskent, amelyekre tobb osztaly is hivatkozhat
 @package { 'wget':
+    ensure => installed
+}
+@package { 'unzip':
     ensure => installed
 }
 
@@ -47,19 +50,9 @@ class { 'grails':
 }
 
 # Gradle 1.10
-$gradlePpa = 'cwchien/gradle'
-exec { "add_gradle_repo":
-    command => "add-apt-repository -y ppa:${gradlePpa} && apt-get update",
-    require => Class['jdk_oracle'],
-    onlyif  => "grep -h \"^deb.*${gradlePpa}\" /etc/apt/sources.list.d/* > /dev/null 2>&1; [ $? -ne 0 ] >/dev/null 2>&1"
-}
-->
-package { "gradle":
-    ensure => installed,
-}
-->
-exec { 'set_gradle_environment_var':
-    command => "grep -Ev '^GRADLE_HOME\\w*=' /etc/environment > /tmp/new_environment && echo 'GRADLE_HOME=/usr/lib/gradle/1.10' >> /tmp/new_environment && mv /tmp/new_environment /etc/environment",
+class { 'gradle':
+    useCache => $useCache,
+    require  => Class['jdk_oracle'],
 }
 
 # Git 1.8.5.2
@@ -77,9 +70,6 @@ class { "mysql_workbench":
 package { "mc":
     ensure => installed
 }
-
-# Kornyezeti valtozok beallitasa
-# TODO
 
 # frissitesek
 # TODO
