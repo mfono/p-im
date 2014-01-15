@@ -14,7 +14,7 @@ Exec {
 }
 
 # frissitesek
-exec { "apt_get_update":
+exec { 'apt_get_update':
     command => "apt-get update",
 }
 Exec['apt_get_update'] -> Package <| |>
@@ -25,7 +25,7 @@ package { "mysql-server":
 }
 
 # Java 1.7.0_45
-class { "jdk_oracle":
+class { 'jdk_oracle':
     useCache => $useCache,
 }
 
@@ -41,19 +41,9 @@ class { "idea":
 }
 
 # Grails 2.3.4
-$grailsPpa = 'groovy-dev/grails'
-exec { "add_grails_repo":
-    command => "add-apt-repository -y ppa:${grailsPpa} && apt-get update",
-    require => Package['ubuntu-desktop'],
-    onlyif  => "grep -h \"^deb.*${grailsPpa}\" /etc/apt/sources.list.d/* > /dev/null 2>&1; [ $? -ne 0 ] >/dev/null 2>&1",
-}
-->
-package { "grails-ppa":
-    ensure => installed,
-}
-->
-exec { 'set_grails_environment_var':
-    command => "grep -Ev '^GRAILS_HOME\\w*=' /etc/environment > /tmp/new_environment && echo 'GRAILS_HOME=/usr/share/grails/2.1.1' >> /tmp/new_environment && mv /tmp/new_environment /etc/environment",
+class { 'grails':
+    useCache => $useCache,
+    require  => Class['jdk_oracle'],
 }
 
 # Gradle 1.10
@@ -73,8 +63,8 @@ exec { 'set_gradle_environment_var':
 }
 
 # Git 1.8.5.2
-package { "git":
-    ensure => installed,
+class { 'git':
+    useCache => $useCache
 }
 
 # MySQL Workbench 6.0

@@ -80,8 +80,9 @@ class jdk_oracle(
         mode => 755
     }
 
-    exec { 'set_jdk_environment_var':
+    exec { 'set_java_home_environment_var':
         command => "grep -Ev '^JAVA_HOME\\w*=' /etc/environment > /tmp/new_environment && echo 'JAVA_HOME=${javaHome}' >> /tmp/new_environment && mv /tmp/new_environment /etc/environment",
         require => Exec['update_alternative_java'],
     }
+# sed -e '/^PATH/s/"$/:\/opt\/grails\/grails-2.3.4\/bin"/g' -i /etc/environment
 }
