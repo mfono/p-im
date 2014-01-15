@@ -1,7 +1,4 @@
-# Installs the Oracle Java JDK
-#
-# The puppet cache flag is for faster local vagrant development, to
-# locally host the tarball from oracle instead of fetching it each time.
+# Oracle Java JDK telepito oszraly
 #
 class jdk_oracle(
     $installDir  = '/opt/java',
@@ -40,7 +37,6 @@ class jdk_oracle(
             cwd       => $installDir,
             creates   => "${installDir}/${installerFilename}",
             command   => "wget -c --no-cookies --no-check-certificate --header \"Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com\" \"${downloadUrl}\" -O ${installerFilename}",
-            timeout   => 600,
             require   => Package['wget'],
         }
         file { "${installDir}/${installerFilename}":

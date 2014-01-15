@@ -1,7 +1,4 @@
-# Installs Grails
-#
-# The puppet cache flag is for faster local vagrant development, to
-# locally host the tarball instead of fetching it each time.
+# Grails telepito osztaly
 #
 class grails(
     $installDir  = '/opt/grails',

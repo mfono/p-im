@@ -1,4 +1,4 @@
-# Installs intelliJ IDEA
+# intelliJ IDEA telepito osztaly
 #
 class idea(
     # A telepites helye

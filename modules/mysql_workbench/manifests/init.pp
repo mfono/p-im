@@ -1,4 +1,4 @@
-# Installs MySQL Workbench
+# MySQL Workbench telepito osztaly
 #
 class mysql_workbench(
     $installDir  = '/opt/mysql-workbench',

@@ -20,8 +20,8 @@ exec { 'apt_get_update':
 Exec['apt_get_update'] -> Package <| |>
 
 # MySQL 5.5
-package { "mysql-server":
-    ensure => installed,
+class { 'mysql-server':
+    useCache => $useCache,
 }
 
 # Java 1.7.0_45
@@ -50,7 +50,7 @@ class { 'grails':
 $gradlePpa = 'cwchien/gradle'
 exec { "add_gradle_repo":
     command => "add-apt-repository -y ppa:${gradlePpa} && apt-get update",
-    require => Package['ubuntu-desktop'],
+    require => Class['jdk_oracle'],
     onlyif  => "grep -h \"^deb.*${gradlePpa}\" /etc/apt/sources.list.d/* > /dev/null 2>&1; [ $? -ne 0 ] >/dev/null 2>&1"
 }
 ->
