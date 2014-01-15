@@ -62,7 +62,7 @@ class { 'git':
 
 # MySQL Workbench 6.0
 class { "mysql_workbench":
-    require  => [Package['ubuntu-desktop'], Package['mysql-server']],
+    require  => [Package['ubuntu-desktop'], Class['mysql-server']],
     useCache => $useCache,
 }
 
