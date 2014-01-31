@@ -5,7 +5,7 @@ $useCache = false
 
 # Alapertelmezett exec path beallitasa a modul szamara
 Exec {
-    path => ['/usr/local/bin', '/usr/local/sbin', '/usr/bin', '/usr/sbin', '/bin']
+    path => ['/usr/local/bin', '/usr/local/sbin', '/usr/bin', '/usr/sbin', '/bin', '/sbin']
 }
 
 # package-ek hozzadasa virtualiskent, amelyekre tobb osztaly is hivatkozhat
@@ -61,15 +61,17 @@ class { 'git':
 }
 
 # MySQL Workbench 6.0
-class { "mysql_workbench":
+class { 'mysql_workbench':
     require  => [Package['ubuntu-desktop'], Class['mysql-server']],
     useCache => $useCache,
 }
 
 # Midnight Commander
-package { "mc":
+package { 'mc':
     ensure => installed
 }
 
-# frissitesek
-# TODO
+package { 'virtualbox-ose-guest-x11':
+	ensure => installed
+}
+
